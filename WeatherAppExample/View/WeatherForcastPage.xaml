@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:WeatherAppExample.ViewModel"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             xmlns:converters="clr-namespace:WeatherAppExample.ViewModel.ValueConverters"
+             ios:Page.UseSafeArea="true"
+             x:Class="WeatherAppExample.View.WeatherForcastPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <vm:WeatherForcastVM x:Key="vm"/>
+            <converters:InverseBoolConverter x:Key="inverseBoolConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <StackLayout BindingContext="{StaticResource vm}"
+                 Margin="16,20,16,0">
+        <Entry Text="{Binding Query, Mode=TwoWay}"/>
+        <ListView ItemsSource="{Binding Locations}"
+                  SelectedItem="{Binding SelectedLocation, Mode=TwoWay}"
+                  IsVisible="{Binding IsResultsVisible}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding LocalizedName}"
+                              Detail="{Binding Country.LocalizedName}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView ItemsSource="{Binding FiveDayForecast}"
+                  IsVisible="{Binding IsResultsVisible, Converter={StaticResource inverseBoolConverter}}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Date, StringFormat='{0:dddd, dd MMMM yyyy}'}"
+                              Detail="{Binding Temperature.StringInfo}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>
